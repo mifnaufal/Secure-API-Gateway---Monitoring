@@ -1,0 +1,28 @@
+{
+  "name": "secure-api-gateway-monitoring",
+  "version": "1.0.0",
+  "description": "Secure API Gateway + Monitoring System",
+  "main": "index.js",
+  "scripts": {
+    "gateway": "cd gateway && npm run dev",
+    "auth": "cd services/auth && npm run dev",
+    "data": "cd services/data && npm run dev",
+    "monitoring": "cd monitoring && npm run dev",
+    "dev:all": "concurrently \"npm run gateway\" \"npm run auth\" \"npm run data\" \"npm run monitoring\"",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose up -d --build",
+    "test": "npm run test --workspaces"
+  },
+  "workspaces": [
+    "gateway",
+    "services/auth",
+    "services/data",
+    "monitoring"
+  ],
+  "keywords": ["api-gateway", "monitoring", "security", "microservices"],
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
