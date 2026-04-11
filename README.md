@@ -171,6 +171,8 @@ docker-compose down
 | GET | `/api/monitoring/activities` | Get activity logs | ❌ |
 | GET | `/api/monitoring/alerts` | Get alerts | ❌ |
 | PUT | `/api/monitoring/alerts/:id/resolve` | Resolve alert | ❌ |
+| GET | `/api/monitoring/anomaly/analyze` | Run traffic anomaly detection | ❌ |
+| GET | `/api/monitoring/anomaly/stats` | Get traffic statistics | ❌ |
 
 ### Admin Endpoints
 
@@ -241,7 +243,66 @@ curl http://localhost:3003/monitoring/alerts?is_resolved=false
 
 # Get blocked IPs
 curl http://localhost:3003/monitoring/admin/ip-tracking?is_blocked=true
+
+# Run traffic anomaly detection
+curl http://localhost:3003/monitoring/anomaly/analyze
+
+# Get traffic statistics
+curl http://localhost:3003/monitoring/anomaly/stats
 ```
+
+### Alert Types
+
+The system automatically detects and alerts:
+
+- **brute_force_detected** - Multiple failed login attempts (CRITICAL)
+- **request_spike** - Unusual traffic increase (WARNING)
+- **error_spike** - Surge in error responses (CRITICAL)
+- **service_down** - Backend service unreachable (CRITICAL)
+- **unusual_ip_activity** - Too many unique IPs (WARNING)
+- **ip_flooding** - Single IP making excessive requests (CRITICAL)
+- **endpoint_abuse** - Specific endpoint being spammed (WARNING)
+- **off_hours_activity** - Unusual activity during off-hours (INFO)
+- **rate_limit_exceeded** - Rate limit violations (WARNING)
+- **database_error** - Database connectivity issues (CRITICAL)
+- **token_abuse** - Repeated invalid token usage (WARNING)
+
+### Alert Notifications
+
+Configure notifications in `.env`:
+
+```bash
+# Webhook notifications (e.g., Slack, Discord)
+WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK
+WEBHOOK_SECRET=your-webhook-secret
+
+# Email notifications
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+SMTP_FROM=alerts@secure-gateway.com
+ALERT_EMAIL=admin@example.com
+```
+
+Critical alerts trigger notifications automatically.
+
+### Background Workers
+
+The monitoring service runs automatic checks:
+
+- **Anomaly Detection** - Every 5 minutes
+  - Analyzes traffic patterns
+  - Detects request/error spikes
+  - Identifies IP flooding
+  - Checks for endpoint abuse
+
+- **Alert Checker** - Every 5 minutes
+  - Verifies service health
+  - Checks database connectivity
+  - Scans for token abuse
+  - Monitors rate limit violations
 
 ## 🗄️ Database Schema
 

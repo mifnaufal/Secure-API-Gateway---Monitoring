@@ -105,6 +105,33 @@ curl http://localhost:3003/monitoring/dashboard
 curl http://localhost:3003/monitoring/admin/ip-tracking?is_blocked=true
 ```
 
+### 7. Run Anomaly Detection
+```bash
+curl http://localhost:3003/monitoring/anomaly/analyze
+```
+
+### 8. Get Traffic Stats
+```bash
+curl http://localhost:3003/monitoring/anomaly/stats
+```
+
+### 9. Configure Webhook Alerts
+```bash
+# Add to .env
+WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK
+WEBHOOK_SECRET=your-secret
+```
+
+### 10. Configure Email Alerts
+```bash
+# Add to .env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+ALERT_EMAIL=admin@example.com
+```
+
 ## 🔑 Default Credentials
 
 ### Admin Account
