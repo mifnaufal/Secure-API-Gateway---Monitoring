@@ -45,7 +45,7 @@ dev:
 # Docker commands
 docker-up:
 	@echo "🐳 Starting Docker containers..."
-	docker-compose up -d
+	docker compose up -d
 	@echo "✅ Containers started! Wait for services to be ready..."
 	@echo "   Gateway: http://localhost:3000"
 	@echo "   Auth: http://localhost:3001"
@@ -54,18 +54,18 @@ docker-up:
 
 docker-down:
 	@echo "🛑 Stopping Docker containers..."
-	docker-compose down
+	docker compose down
 
 docker-build:
 	@echo "🔨 Building and starting Docker containers..."
-	docker-compose up -d --build
+	docker compose up -d --build
 	@echo "✅ Build complete!"
 
 docker-rebuild:
 	@echo "🔄 Rebuilding Docker containers..."
-	docker-compose down
-	docker-compose build --no-cache
-	docker-compose up -d
+	docker compose down
+	docker compose build --no-cache
+	docker compose up -d
 
 # Test commands
 test:
@@ -120,27 +120,27 @@ clean:
 # View logs
 logs:
 	@echo "📋 Viewing Docker logs..."
-	docker-compose logs -f
+	docker compose logs -f
 
 # View specific service logs
 logs-gw:
-	docker-compose logs -f gateway
+	docker compose logs -f gateway
 
 logs-auth:
-	docker-compose logs -f auth-service
+	docker compose logs -f auth-service
 
 logs-data:
-	docker-compose logs -f data-service
+	docker compose logs -f data-service
 
 logs-mon:
-	docker-compose logs -f monitoring-service
+	docker compose logs -f monitoring-service
 
 # Check service status
 status:
 	@echo "📊 Service Status:"
 	@echo ""
 	@echo "Docker Containers:"
-	docker-compose ps
+	docker compose ps
 	@echo ""
 	@echo "Health Checks:"
 	@curl -s http://localhost:3000/health | jq . || echo "   Gateway: ❌"

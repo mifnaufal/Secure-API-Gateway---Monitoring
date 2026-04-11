@@ -128,7 +128,14 @@ npm run docker:build
 docker-compose up -d --build
 ```
 
-2. **Stop All Services**
+2. **Start Dashboard Frontend**
+```bash
+npm run dashboard
+```
+
+Dashboard akan jalan di: **http://localhost:3004**
+
+3. **Stop All Services**
 ```bash
 npm run docker:down
 ```
@@ -138,7 +145,87 @@ npm run docker:down
 docker-compose down
 ```
 
-## 📡 API Endpoints
+### Option 3: Makefile (Easiest)
+
+```bash
+# Quick start - install & run
+make quick-start
+
+# Start dashboard only
+cd dashboard && npm start
+
+# View in browser
+open http://localhost:3004
+```
+
+## 🎨 Frontend Dashboard
+
+A beautiful, production-ready monitoring dashboard is included!
+
+### Features
+
+- **Dashboard Overview** - Real-time stats, charts, and alerts
+- **Anomaly Analysis** - Traffic pattern detection with auto-monitoring
+- **Alerts Management** - View, filter, and resolve security alerts
+- **IP Tracking** - Monitor and block/unblock suspicious IPs
+- **Request Logs** - Browse and filter HTTP request logs
+
+### How to Run
+
+```bash
+# Start backend services first
+npm run docker:build
+
+# Start dashboard (new terminal)
+npm run dashboard
+
+# Open browser
+# http://localhost:3004
+```
+
+### Dashboard Pages
+
+1. **Dashboard** (Main Overview)
+   - Total requests, active alerts, blocked IPs
+   - Charts: Requests by status code & service
+   - Recent activities and critical alerts
+   - Auto-refresh every 30 seconds
+
+2. **Anomaly Analysis**
+   - Traffic statistics (5min, 1hour, 24hours)
+   - Error rate monitoring
+   - Top endpoints and IPs
+   - Real-time anomaly detection
+   - Auto-detect mode (runs every 60 seconds)
+
+3. **Alerts**
+   - List all security alerts
+   - Filter by severity (critical/warning/info)
+   - Filter by status (active/resolved)
+   - Resolve alerts with one click
+
+4. **IP Tracking**
+   - View all tracked IPs
+   - See request counts and failed logins
+   - Block/unblock IPs instantly
+   - Filter by status (blocked/active)
+
+5. **Request Logs**
+   - Browse HTTP request logs
+   - Filter by status code
+   - Filter by service
+   - View response times and IPs
+
+### Screenshot Features
+
+- Dark theme optimized for monitoring
+- Responsive design (mobile-friendly)
+- Real-time updates
+- Color-coded severity levels
+- Interactive charts (Chart.js)
+- Toast notifications
+- Clean, minimal UI (no icon overload)
+
 
 ### Authentication
 
