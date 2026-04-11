@@ -26,7 +26,7 @@ PostgreSQL Database + Redis Cache
 - ✅ Microservices separation (Auth + Data)
 - ✅ REST API design
 - ✅ PostgreSQL database integration
-- ✅ Redis caching layer
+- ✅ Redis caching layer (with auto invalidation)
 
 ### Authentication & Access Control
 - ✅ JWT authentication with access/refresh tokens
@@ -40,6 +40,7 @@ PostgreSQL Database + Redis Cache
 - ✅ Helmet security headers
 - ✅ CORS protection
 - ✅ IP-based tracking and blocking
+- ✅ Token abuse detection
 
 ### Logging & Monitoring
 - ✅ Request logging (IP, endpoint, status, duration)
@@ -47,19 +48,26 @@ PostgreSQL Database + Redis Cache
 - ✅ Centralized log storage in PostgreSQL
 - ✅ Dashboard API for analytics
 - ✅ Alert system for suspicious activities
+- ✅ Webhook & email notifications
 
 ### Detection & Alerts
 - ✅ Multiple failed login detection
-- ✅ IP-based activity tracking
+- ✅ Traffic anomaly detection (request/error spikes)
+- ✅ IP flooding detection
+- ✅ Endpoint abuse detection
+- ✅ Off-hours activity monitoring
 - ✅ Automatic IP blocking after repeated failures
-- ✅ Alert generation and resolution system
+- ✅ Alert generation with severity levels (info/warning/critical)
+- ✅ Real-time alert notifications (webhook + email)
 
 ### DevOps / Production Ready
 - ✅ Dockerized services
 - ✅ Docker Compose orchestration
+- ✅ GitHub Actions CI/CD pipeline
 - ✅ Environment config management
 - ✅ Health checks for all services
 - ✅ Database auto-migration
+- ✅ Makefile for common operations
 
 ## 🚀 Quick Start
 

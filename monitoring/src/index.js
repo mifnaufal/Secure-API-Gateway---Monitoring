@@ -3,6 +3,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const { createTables } = require('./db/migrate');
+const { startAnomalyDetection } = require('./workers/anomalyWorker');
+const { startAlertChecker } = require('./utils/alertSystem');
 const monitoringRoutes = require('./routes/monitoring');
 require('dotenv').config();
 
@@ -11,6 +13,12 @@ const PORT = process.env.MONITORING_SERVICE_PORT || 3003;
 
 // Initialize database tables
 createTables().catch(console.error);
+
+// Start anomaly detection worker
+startAnomalyDetection();
+
+// Start alert checker
+startAlertChecker();
 
 // Middleware
 app.use(helmet());
