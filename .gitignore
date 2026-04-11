@@ -1,10 +1,36 @@
+# Node
 node_modules/
+npm-debug.log*
+package-lock.json
+yarn.lock
+.npm
 .env
-*.log
-dist/
-build/
-coverage/
+.env.local
+.env.*.local
+
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
-docker-compose.override.yml
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Docker
+*.pid
+
+# Temporary files
+tmp/
+temp/
+*.tmp
