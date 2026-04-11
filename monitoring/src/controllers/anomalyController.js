@@ -1,9 +1,13 @@
-const { analyzeTrafficPatterns, storeAnomalies, getTrafficStats } = require('../utils/anomalyDetection');
+const {
+  analyzeTrafficPatterns: analyzeTraffic,
+  storeAnomalies,
+  getTrafficStats: getTrafficData,
+} = require('../utils/anomalyDetection');
 
 // Analyze traffic and return anomalies
 const analyzeTrafficPatterns = async (req, res, next) => {
   try {
-    const anomalies = await analyzeTrafficPatterns();
+    const anomalies = await analyzeTraffic();
 
     // Store anomalies as alerts
     if (anomalies.length > 0) {
@@ -23,7 +27,7 @@ const analyzeTrafficPatterns = async (req, res, next) => {
 // Get traffic statistics
 const getTrafficStats = async (req, res, next) => {
   try {
-    const stats = await getTrafficStats();
+    const stats = await getTrafficData();
 
     if (!stats) {
       return res.status(500).json({
