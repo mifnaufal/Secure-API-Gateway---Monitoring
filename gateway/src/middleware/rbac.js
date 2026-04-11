@@ -1,26 +1,39 @@
-const requireRole = (role) => (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({
-      error: { message: 'Authentication required', code: 'UNAUTHORIZED' },
-    });
-  }
+const requireRole = (roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        error: {
+          message: 'Authentication required',
+          code: 'AUTHENTICATION_REQUIRED',
+        },
+      });
+    }
 
-  if (req.user.role !== role && req.user.role !== 'admin') {
-    return res.status(403).json({
-      error: { message: 'Insufficient permissions', code: 'FORBIDDEN' },
-    });
-  }
+    const userRole = req.user.role;
 
-  next();
+    if (!roles.includes(userRole)) {
+      return res.status(403).json({
+        error: {
+          message: 'Insufficient permissions',
+          code: 'INSUFFICIENT_PERMISSIONS',
+        },
+      });
+    }
+
+    next();
+  };
 };
 
 const requireAdmin = (req, res, next) => {
-  if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({
-      error: { message: 'Admin access required', code: 'ADMIN_ONLY' },
-    });
-  }
-  next();
+  return requireRole(['admin'])(req, res, next);
 };
 
-module.exports = { requireRole, requireAdmin };
+const requireAdminOrManager = (req, res, next) => {
+  return requireRole(['admin', 'manager'])(req, res, next);
+};
+
+module.exports = {
+  requireRole,
+  requireAdmin,
+  requireAdminOrManager,
+};

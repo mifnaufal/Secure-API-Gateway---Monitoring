@@ -1,12 +1,14 @@
 const express = require('express');
 const { authenticateToken } = require('../middleware/auth');
 const { proxyToService } = require('../middleware/proxy');
+const { authRateLimiter } = require('../middleware/rateLimiter');
+const { requireAdmin } = require('../middleware/rbac');
 require('dotenv').config();
 
 const router = express.Router();
 
 // Public routes (no auth required)
-router.post('/api/auth/login', proxyToService(process.env.AUTH_SERVICE_URL, '/auth/login'));
+router.post('/api/auth/login', authRateLimiter, proxyToService(process.env.AUTH_SERVICE_URL, '/auth/login'));
 router.post('/api/auth/register', proxyToService(process.env.AUTH_SERVICE_URL, '/auth/register'));
 router.post('/api/auth/refresh', proxyToService(process.env.AUTH_SERVICE_URL, '/auth/refresh'));
 router.post('/api/auth/logout', authenticateToken, proxyToService(process.env.AUTH_SERVICE_URL, '/auth/logout'));
@@ -26,6 +28,6 @@ router.get('/api/monitoring/*', proxyToService(process.env.MONITORING_SERVICE_UR
 router.post('/api/monitoring/*', proxyToService(process.env.MONITORING_SERVICE_URL, '/monitoring'));
 
 // Admin routes (admin role required)
-router.get('/api/admin/*', authenticateToken, require('../middleware/rbac').requireAdmin, proxyToService(process.env.MONITORING_SERVICE_URL, '/monitoring/admin'));
+router.get('/api/admin/*', authenticateToken, requireAdmin, proxyToService(process.env.MONITORING_SERVICE_URL, '/monitoring/admin'));
 
 module.exports = router;

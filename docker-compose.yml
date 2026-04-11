@@ -1,0 +1,160 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: secure-gateway-db
+    environment:
+      POSTGRES_DB: secure_gateway
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gateway-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: secure-gateway-redis
+    command: redis-server --requirepass redis_password
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - gateway-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis_password", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Gateway
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: secure-gateway-api
+    environment:
+      - GATEWAY_PORT=3000
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - DATA_SERVICE_URL=http://data-service:3002
+      - MONITORING_SERVICE_URL=http://monitoring-service:3003
+      - JWT_SECRET=super-secret-jwt-key-change-in-production
+      - JWT_ACCESS_EXPIRY=15m
+      - JWT_REFRESH_EXPIRY=7d
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=secure_gateway
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=redis_password
+      - RATE_LIMIT_WINDOW_MS=900000
+      - RATE_LIMIT_MAX_REQUESTS=100
+      - BRUTE_FORCE_WINDOW_MS=900000
+      - BRUTE_FORCE_MAX_ATTEMPTS=5
+      - LOG_LEVEL=info
+      - LOG_FORMAT=json
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - gateway-network
+    restart: unless-stopped
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./services/auth
+      dockerfile: Dockerfile
+    container_name: secure-gateway-auth
+    environment:
+      - AUTH_SERVICE_PORT=3001
+      - JWT_SECRET=super-secret-jwt-key-change-in-production
+      - JWT_ACCESS_EXPIRY=15m
+      - JWT_REFRESH_EXPIRY=7d
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=secure_gateway
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=redis_password
+      - MONITORING_SERVICE_URL=http://monitoring-service:3003
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gateway-network
+    restart: unless-stopped
+
+  # Data Service
+  data-service:
+    build:
+      context: ./services/data
+      dockerfile: Dockerfile
+    container_name: secure-gateway-data
+    environment:
+      - DATA_SERVICE_PORT=3002
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=secure_gateway
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres_password
+      - JWT_SECRET=super-secret-jwt-key-change-in-production
+    ports:
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gateway-network
+    restart: unless-stopped
+
+  # Monitoring Service
+  monitoring-service:
+    build:
+      context: ./monitoring
+      dockerfile: Dockerfile
+    container_name: secure-gateway-monitoring
+    environment:
+      - MONITORING_SERVICE_PORT=3003
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=secure_gateway
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres_password
+    ports:
+      - "3003:3003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gateway-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  gateway-network:
+    driver: bridge
