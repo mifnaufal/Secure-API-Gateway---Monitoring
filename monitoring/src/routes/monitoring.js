@@ -10,6 +10,11 @@ const {
   getIPTracking,
   toggleIPBlock,
 } = require('../controllers/monitoringController');
+const {
+  analyzeTrafficPatterns,
+  storeAnomalies,
+  getTrafficStats,
+} = require('../controllers/anomalyController');
 
 const router = express.Router();
 
@@ -23,6 +28,10 @@ router.get('/requests', getRequestLogs);
 router.get('/activities', getActivityLogs);
 router.get('/alerts', getAlerts);
 router.put('/alerts/:id/resolve', resolveAlert);
+
+// Anomaly detection endpoints
+router.get('/anomaly/analyze', analyzeTrafficPatterns);
+router.get('/anomaly/stats', getTrafficStats);
 
 // Admin endpoints
 router.get('/admin/ip-tracking', getIPTracking);

@@ -7,6 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 const routes = require('./routes');
 const { rateLimiter } = require('./middleware/rateLimiter');
 const { requestLogger } = require('./middleware/logger');
+const { initRedis, getRedisClient } = require('./utils/redis');
 require('dotenv').config();
 
 const app = express();
@@ -25,6 +26,7 @@ redisClient.on('connect', () => console.log('Redis Client Connected'));
 (async () => {
   try {
     await redisClient.connect();
+    await initRedis();
   } catch (err) {
     console.warn('Redis not available, running without cache:', err.message);
   }

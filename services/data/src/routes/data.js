@@ -10,22 +10,23 @@ const {
 } = require('../controllers/dataController');
 const { authenticateToken } = require('../middleware/auth');
 const { validate } = require('../middleware/validator');
+const { cache, invalidateCache } = require('../middleware/cache');
 
 const router = express.Router();
 
 // All routes require authentication
 router.use(authenticateToken);
 
-// Get items with filtering and pagination
-router.get('/', getItems);
+// Get items with filtering and pagination (cached for 5 minutes)
+router.get('/', cache(300), getItems);
 
-// Get activities
-router.get('/activities', getActivities);
+// Get activities (cached for 2 minutes)
+router.get('/activities', cache(120), getActivities);
 
-// Get single item
-router.get('/:id', getItemById);
+// Get single item (cached for 10 minutes)
+router.get('/:id', cache(600), getItemById);
 
-// Create item
+// Create item (invalidate cache)
 router.post(
   '/',
   [
@@ -35,10 +36,14 @@ router.post(
     body('price').optional().isFloat({ min: 0 }),
   ],
   validate,
+  async (req, res, next) => {
+    await invalidateCache('');
+    next();
+  },
   createItem
 );
 
-// Update item
+// Update item (invalidate cache)
 router.put(
   '/:id',
   [
@@ -48,10 +53,17 @@ router.put(
     body('price').optional().isFloat({ min: 0 }),
   ],
   validate,
+  async (req, res, next) => {
+    await invalidateCache('');
+    next();
+  },
   updateItem
 );
 
-// Delete item (soft delete)
-router.delete('/:id', deleteItem);
+// Delete item (invalidate cache)
+router.delete('/:id', async (req, res, next) => {
+  await invalidateCache('');
+  next();
+}, deleteItem);
 
 module.exports = router;
