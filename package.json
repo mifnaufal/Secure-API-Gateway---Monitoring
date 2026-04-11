@@ -8,7 +8,8 @@
     "auth": "cd services/auth && npm run dev",
     "data": "cd services/data && npm run dev",
     "monitoring": "cd monitoring && npm run dev",
-    "dev:all": "concurrently \"npm run gateway\" \"npm run auth\" \"npm run data\" \"npm run monitoring\"",
+    "dashboard": "cd dashboard && npm start",
+    "dev:all": "concurrently \"npm run gateway\" \"npm run auth\" \"npm run data\" \"npm run monitoring\" \"npm run dashboard\"",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:build": "docker-compose up -d --build",
@@ -20,7 +21,7 @@
     "services/data",
     "monitoring"
   ],
-  "keywords": ["api-gateway", "monitoring", "security", "microservices"],
+  "keywords": ["api-gateway", "monitoring", "security", "microservices", "dashboard"],
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
